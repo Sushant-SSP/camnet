@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -707,3 +708,1082 @@
     </script>
 </body>
 </html>
+=======
+<!--
+  index.html - Single-file website for technician (electrician, CCTV, networking)
+  -------------------------------------------------------------------------------
+  Quick edits:
+    - Main brand color: change --brand in :root (CSS variables) near the top.
+    - Logo text: edit the <span class="logo-text"> inside header .logo
+    - Phone & email (visible & mailto): change data-phone and data-email in the <header> element attributes, and also change the visible phone/email in the Contact section.
+    - Optionally enable Google Font: near top of <head> there's a commented-out <link> for Google Fonts. Uncomment if you want web font (requires network).
+  Notes:
+    - Works offline (no external assets required). Uses inline SVGs and CSS for visuals.
+    - All functionality is client-side and degrades gracefully (mailto fallback).
+    - Dark/light theme persisted in localStorage ("theme" key).
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dependable Electrical, CCTV & Network Solutions — ProTech Tech</title>
+  <meta name="description" content="Certified technician providing electrical services, CCTV installation & repair, and structured Ethernet networking for banks, colleges and businesses. Same-day response in metro areas." />
+  <!-- Optional Google Font (uncomment to use; remains optional for offline use) -->
+  <!-- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet"> -->
+
+  <style>
+    /* ===========================
+       CSS VARIABLES & BASE
+       =========================== */
+    :root{
+      --brand: #0b3b59;            /* main deep navy/teal - change here */
+      --accent: #0fa3a4;           /* teal accent */
+      --accent-2:#d4af37;          /* soft gold */
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --muted: #6b7280;
+      --glass: rgba(255,255,255,0.6);
+      --radius: 12px;
+      --shadow-sm: 0 6px 18px rgba(11,59,89,0.06);
+      --shadow-md: 0 12px 30px rgba(11,59,89,0.08);
+      --max-width: 1200px;
+      --ease: cubic-bezier(.2,.9,.3,1);
+      --fs-hero: clamp(1.6rem, 4.4vw, 3.2rem);
+      --fs-lead: clamp(1rem, 2.2vw, 1.25rem);
+    }
+
+    /* Dark theme overrides */
+    :root[data-theme="dark"]{
+      --bg: #071017;
+      --surface: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      --muted: #9aa9b2;
+      --glass: rgba(255,255,255,0.04);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      background: var(--bg);
+      color: #072131;
+      line-height:1.45;
+      -webkit-tap-highlight-color: transparent;
+    }
+    :where(a){color:inherit}
+
+    .wrap{
+      max-width:var(--max-width);
+      margin:0 auto;
+      padding: clamp(16px, 2.2vw, 28px);
+    }
+
+    /* ===========================
+       HEADER & NAV
+       =========================== */
+    header{
+      position:sticky;
+      top:12px;
+      z-index:60;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:10px;
+      border-radius: 14px;
+      backdrop-filter: blur(8px) saturate(120%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.65), rgba(255,255,255,0.5));
+      box-shadow: var(--shadow-sm);
+      margin: 12px;
+    }
+    header[data-theme="dark"]{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    }
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      text-decoration:none;
+    }
+    .logo svg{width:44px;height:44px;display:block}
+    .logo-text{
+      font-weight:700;
+      letter-spacing:0.2px;
+      font-size:1.05rem;
+      color:var(--brand);
+    }
+    .nav{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      margin-left:auto;
+    }
+    nav a{
+      text-decoration:none;
+      padding:8px 10px;
+      border-radius:8px;
+      color:var(--muted);
+      font-weight:600;
+      transition:all 180ms var(--ease);
+      font-size:0.95rem;
+    }
+    nav a:focus, nav a:hover{ color:var(--brand); transform:translateY(-2px) }
+    .cta{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:10px 14px;
+      background:linear-gradient(90deg, var(--accent), var(--accent-2));
+      color:white;
+      border-radius:10px;
+      text-decoration:none;
+      font-weight:700;
+      box-shadow: var(--shadow-md);
+      transition:transform 200ms var(--ease), box-shadow 200ms var(--ease);
+    }
+    .cta.secondary{
+      background:transparent;
+      color:var(--brand);
+      border:1px solid rgba(11,59,89,0.08);
+      box-shadow:none;
+      font-weight:700;
+    }
+    .mobile-toggle{
+      display:none;
+      background:transparent;border:0;padding:8px;border-radius:8px;
+    }
+
+    /* ===========================
+       HERO
+       =========================== */
+    .hero{
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:34px;
+      align-items:center;
+      margin-top:22px;
+    }
+    .hero .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.82));
+      border-radius:var(--radius);
+      padding:28px;
+      box-shadow: var(--shadow-md);
+    }
+    .kicker{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:8px 12px;
+      border-radius:50px;
+      background:linear-gradient(90deg, rgba(15,163,164,0.08), rgba(212,175,55,0.04));
+      color:var(--brand);
+      font-weight:700;
+      font-size:0.9rem;
+    }
+    h1.hero-title{
+      margin:14px 0 8px 0;
+      font-size:var(--fs-hero);
+      line-height:1.02;
+      color:var(--brand);
+    }
+    p.lead{ font-size:var(--fs-lead); color:var(--muted); margin:0 0 18px 0 }
+
+    .hero-ctas{ display:flex; gap:12px; margin-top:12px; flex-wrap:wrap }
+    .trust{
+      display:flex; gap:12px; align-items:center; margin-top:18px; color:var(--muted)
+    }
+    .trust .badge{display:inline-flex; gap:8px; align-items:center; padding:6px 10px; border-radius:10px; background:var(--glass); font-weight:700;}
+
+    /* Animated background decorative */
+    .hero-bg{
+      position:relative;
+      border-radius:var(--radius);
+      min-height: 260px;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .hero-svg{
+      position:absolute; inset:0; width:100%; height:100%; opacity:0.12; transform: translateZ(0);
+    }
+    .stats{
+      display:flex;
+      gap:12px;
+      margin-top:18px;
+      justify-content:space-between;
+    }
+    .stat{
+      display:flex; flex-direction:column; align-items:flex-start; gap:6px;
+    }
+    .stat .num{ font-weight:800; font-size:1.4rem; color:var(--brand) }
+    .stat .label{ color:var(--muted); font-size:0.9rem }
+
+    /* ===========================
+       SECTIONS
+       =========================== */
+    section{ margin:46px 0; padding:0 }
+    h2.section-title{ margin:0 0 12px 0; font-size:1.25rem; color:var(--brand) }
+    .subtle{ color:var(--muted); margin-bottom:18px }
+
+    .services{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:18px;
+    }
+    .service-card{
+      background:var(--surface);
+      border-radius:14px;
+      padding:18px;
+      box-shadow: var(--shadow-sm);
+      transition:transform 220ms var(--ease), box-shadow 220ms var(--ease);
+      cursor:default;
+    }
+    .service-card:hover{ transform:translateY(-8px); box-shadow: var(--shadow-md) }
+    .service-card svg{width:48px;height:48px}
+    .service-card h3{ margin:8px 0 6px 0; font-size:1.05rem }
+    .service-card p{ margin:0; color:var(--muted); font-size:0.95rem }
+
+    /* Portfolio */
+    .portfolio-grid{
+      display:grid;
+      grid-template-columns: repeat(3,1fr);
+      gap:14px;
+    }
+    .project{
+      position:relative;
+      border-radius:12px;
+      overflow:hidden;
+      min-height:150px;
+      background:linear-gradient(160deg, rgba(11,59,89,0.06), rgba(15,163,164,0.04));
+      display:flex;
+      align-items:flex-end;
+      padding:14px;
+      color: #fff;
+      cursor:pointer;
+      transition:transform 240ms var(--ease);
+    }
+    .project:hover{ transform:translateY(-8px) }
+    .project .meta{ z-index:2 }
+    .project .overlay{
+      position:absolute; inset:0; background:linear-gradient(180deg, transparent, rgba(0,0,0,0.35)); opacity:0.95;
+    }
+
+    /* Lightbox modal */
+    .modal{
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+      background: rgba(0,0,0,0.5); z-index:120;
+      padding:20px;
+    }
+    .modal.open{ display:flex }
+    .modal .modal-card{
+      width:100%; max-width:880px; border-radius:12px; padding:18px; background:var(--surface);
+      box-shadow:var(--shadow-md);
+    }
+    .modal .modal-media{ width:100%; height:320px; border-radius:8px; background:linear-gradient(90deg, rgba(15,163,164,0.12), rgba(11,59,89,0.08)); margin-bottom:12px; display:flex; align-items:center; justify-content:center; color:var(--brand); font-weight:800 }
+
+    /* Before/After slider */
+    .ba{
+      position:relative; height:260px; border-radius:12px; overflow:hidden; background:linear-gradient(90deg, rgba(11,59,89,0.06), rgba(15,163,164,0.04));
+    }
+    .ba .after{ position:absolute; inset:0; width:50%; overflow:hidden; transition:width 300ms var(--ease) }
+    .ba img, .ba .placeholder{ width:100%; height:100%; object-fit:cover; display:block }
+    .ba .handle{
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:3;
+      background:var(--surface); border-radius:999px; padding:8px 12px; box-shadow:var(--shadow-md); display:inline-flex; gap:8px; align-items:center; cursor:pointer;
+    }
+
+    /* Pricing */
+    .pricing-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px }
+    .price-card{ padding:18px; border-radius:12px; background:var(--surface); box-shadow:var(--shadow-sm); border:1px solid rgba(11,59,89,0.04) }
+    .price-card.best{ transform:translateY(-6px); box-shadow:var(--shadow-md); border:1px solid rgba(15,163,164,0.12) }
+
+    /* Testimonials carousel (simple) */
+    .testimonials{ display:flex; gap:12px; overflow:hidden; position:relative }
+    .testimonial{ min-width:80%; padding:18px; border-radius:12px; background:var(--surface); box-shadow:var(--shadow-sm) }
+
+    /* Contact form */
+    form.contact{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; align-items:start }
+    .field{ display:flex; flex-direction:column; gap:6px }
+    label{ font-weight:700; font-size:0.85rem }
+    input, textarea, select{
+      padding:10px 12px; border-radius:8px; border:1px solid rgba(11,59,89,0.08); background:transparent; outline:none;
+      font-size:0.95rem;
+    }
+    input:focus, textarea:focus, select:focus{ box-shadow:0 6px 18px rgba(11,59,89,0.06); border-color:var(--accent) }
+    textarea{ min-height:120px; resize:vertical }
+    .form-actions{ grid-column:1/-1; display:flex; gap:12px; align-items:center }
+    .btn{ padding:10px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:700 }
+    .btn.primary{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white }
+    .btn.ghost{ background:transparent; border:1px solid rgba(11,59,89,0.06) }
+
+    /* Footer */
+    footer{ color:var(--muted); font-size:0.9rem; padding:26px 0 50px; border-top:1px solid rgba(11,59,89,0.04) }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero{ grid-template-columns: 1fr; }
+      .portfolio-grid{ grid-template-columns: repeat(2,1fr) }
+      .services{ grid-template-columns: repeat(2,1fr) }
+      header{ padding:10px }
+      .mobile-toggle{ display:inline-flex }
+      nav{ display:none }
+      .nav.responsive{ display:flex; position:absolute; right:12px; top:64px; background:var(--surface); padding:10px; border-radius:10px; box-shadow:var(--shadow-md); flex-direction:column }
+    }
+    @media (max-width:560px){
+      .portfolio-grid{ grid-template-columns: 1fr }
+      .services{ grid-template-columns: 1fr }
+      form.contact{ grid-template-columns: 1fr }
+      .hero .card{ padding:16px }
+      header{ top:8px }
+    }
+
+    /* Focus-visible accessibility */
+    :focus{ outline:none }
+    :focus-visible{ outline:3px solid rgba(15,163,164,0.18); outline-offset:2px; border-radius:6px }
+
+    /* Print-friendly quote view */
+    @media print{
+      body{ background:white; color:black }
+      header, .cta, .hero-svg, nav, .trust, .testimonial, .pricing-grid, .clients { display:none }
+      .wrap{ padding:0 }
+    }
+
+  </style>
+</head>
+
+<body>
+  <!-- Header: data-phone & data-email used by JS to populate contact CTAs and for easy editing -->
+  <header id="site-header" data-phone="+91-98765-43210" data-email="contact@protech.example">
+    <div class="wrap" style="display:flex;align-items:center;gap:18px;">
+      <a href="#" class="logo" aria-label="ProTech Home">
+        <!-- Animated simple SVG logo (loop subtle rotation via CSS animation) -->
+        <svg viewBox="0 0 48 48" role="img" aria-hidden="false" focusable="false">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0" stop-color="#0fa3a4"/><stop offset="1" stop-color="#d4af37"/>
+            </linearGradient>
+          </defs>
+          <g transform="translate(4,4)">
+            <rect x="0" y="0" width="40" height="40" rx="8" fill="url(#g1)"></rect>
+            <path d="M10 22 L18 10 L26 22 Z" fill="#fff" opacity="0.94"></path>
+          </g>
+        </svg>
+        <span class="logo-text">ProTech Tech</span>
+      </a>
+
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#services">Services</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#case">Case Study</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div style="display:flex;align-items:center;gap:12px;margin-left:auto;">
+        <button class="mobile-toggle" id="navToggle" aria-expanded="false" aria-controls="mobileNav" aria-label="Toggle navigation">
+          <!-- hamburger icon -->
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+
+        <a href="#" class="cta secondary" id="callBtn" title="Call us">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.86 19.86 0 0 1 2.08 4.18 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.72c.12 1.05.35 2.07.68 3.05a2 2 0 0 1-.45 2.11L9.7 11.3a16 16 0 0 0 6 6l1.41-1.41a2 2 0 0 1 2.11-.45c.98.33 2 .56 3.05.68A2 2 0 0 1 22 16.92z"></path></svg>
+          <span id="headerPhone">+91-98765-43210</span>
+        </a>
+
+        <a href="#contact" class="cta" id="quoteBtn">Request a Quote</a>
+
+        <button id="themeToggle" title="Toggle dark mode" aria-pressed="false" style="background:transparent;border:0;padding:6px;border-radius:8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="currentColor"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="top">
+    <!-- HERO -->
+    <section class="hero" aria-label="Intro">
+      <div class="card" style="position:relative; overflow:visible;">
+        <div class="kicker" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 2v6M12 16v6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M2 12h6M16 12h6M4.9 19.1l4.2-4.2M14.9 9.1l4.2-4.2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+          </svg>
+          Certified Technician
+        </div>
+
+        <h1 class="hero-title">Dependable Electrical, CCTV & Network Solutions — Fast, Secure, Professional.</h1>
+        <p class="lead">Trusted by banks, colleges and businesses for installation, repair and structured cabling. Certified, insured, and offering same-day response in metro areas.</p>
+
+        <div class="hero-ctas">
+          <a href="#contact" class="cta" id="heroQuote">Request a Quote</a>
+          <a href="#portfolio" class="cta secondary">See Work</a>
+        </div>
+
+        <div class="trust" aria-hidden="true">
+          <span class="badge">Trusted by banks & colleges</span>
+          <span style="color:var(--muted)">•</span>
+          <span class="badge">24/7 Support</span>
+          <span style="color:var(--muted)">•</span>
+          <span class="badge">Same-day Response</span>
+        </div>
+
+        <div class="stats" aria-hidden="true" style="margin-top:18px">
+          <div class="stat"><div class="num" data-counter="14">0</div><div class="label">Years Experience</div></div>
+          <div class="stat"><div class="num" data-counter="1280">0</div><div class="label">Projects Completed</div></div>
+          <div class="stat"><div class="num" data-counter="320">0</div><div class="label">Satisfied Clients</div></div>
+        </div>
+      </div>
+
+      <aside class="hero-bg" aria-hidden="false">
+        <!-- Decorative animated SVG lines -->
+        <svg class="hero-svg" viewBox="0 0 800 400" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1">
+              <stop offset="0" stop-color="#0fa3a4"></stop>
+              <stop offset="1" stop-color="#d4af37"></stop>
+            </linearGradient>
+            <filter id="blur"><feGaussianBlur stdDeviation="12" /></filter>
+          </defs>
+          <g filter="url(#blur)">
+            <ellipse cx="420" cy="200" rx="360" ry="120" fill="url(#grad)" opacity="0.10"></ellipse>
+          </g>
+        </svg>
+
+        <div style="width:100%;max-width:360px">
+          <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px">
+            <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800">24</div>
+            <div>
+              <div style="font-weight:800;color:var(--brand)">24/7 Rapid Support</div>
+              <div style="color:var(--muted)">Remote diagnostics & quick onsite repairs</div>
+            </div>
+          </div>
+
+          <div style="border-radius:12px;background:linear-gradient(180deg,#fff,#f3f7fb);padding:12px;box-shadow:var(--shadow-sm)">
+            <strong style="display:block;color:var(--brand)">Get a fast estimate</strong>
+            <div style="color:var(--muted);margin-top:6px">Phone: <a href="#" id="panelPhone" style="color:var(--brand);text-decoration:none;font-weight:700">+91-98765-43210</a></div>
+            <div style="margin-top:10px;display:flex;gap:8px">
+              <a href="#contact" class="btn primary" style="font-size:0.95rem">Request Quote</a>
+              <a href="tel:+919876543210" class="btn ghost" style="font-size:0.95rem">Call Now</a>
+            </div >
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services" aria-labelledby="services-title">
+      <h2 id="services-title" class="sec
+
+        <h2 id="services-title" class="section-title">Services</h2>
+      <p class="subtle">Commercial-grade services for offices, banks, colleges and public facilities.</p>
+
+      <div class="services" role="list">
+        <article class="service-card" role="listitem">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v6M12 16v6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          <h3>Commercial Electrical</h3>
+          <p>Power distribution, panel upgrades, emergency lighting and preventative maintenance with safety-first protocols.</p>
+        </article>
+
+        <article class="service-card" role="listitem">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 11-6.4-12.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          <h3>CCTV Installation & Repair</h3>
+          <p>Design, install and maintain camera systems, DVR/NVR setups, remote monitoring and secure recording solutions.</p>
+        </article>
+
+        <article class="service-card" role="listitem">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          <h3>Structured Networking (Ethernet)</h3>
+          <p>Cabling, switches, VLAN segmentation, audits, and low-latency designs for offices, banks and campus networks.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- WHY CHOOSE -->
+    <section aria-labelledby="why-title">
+      <h2 id="why-title" class="section-title">Why Choose ProTech</h2>
+      <p class="subtle">Professional standards, clear documentation and enterprise-level reliability tailored to local customers.</p>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start;">
+        <div style="background:var(--surface);border-radius:12px;padding:18px;box-shadow:var(--shadow-sm)">
+          <h3 style="margin-top:0">Reliable, Certified & Insured</h3>
+          <p style="color:var(--muted)">All projects include documentation, warranties, and compliance checks. We perform audits for high-security environments like banks and campuses.</p>
+
+          <ul style="margin-top:12px;color:var(--muted)">
+            <li>Onsite safety checks & certification</li>
+            <li>24/7 remote diagnostics</li>
+            <li>Custom maintenance plans</li>
+          </ul>
+        </div>
+
+        <aside style="display:flex;flex-direction:column;gap:12px">
+          <div style="background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;padding:14px;border-radius:12px;font-weight:800">
+            <div style="font-size:1.1rem">Free site survey</div>
+            <div style="font-size:0.95rem;font-weight:400">For commercial projects over ₹50,000</div>
+          </div>
+
+          <div style="background:var(--surface);padding:12px;border-radius:12px;box-shadow:var(--shadow-sm)">
+            <div style="font-size:1.4rem;font-weight:800;color:var(--brand)" data-counter="99">0</div>
+            <div style="color:var(--muted)">% Client Satisfaction</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO -->
+    <section id="portfolio" aria-labelledby="portfolio-title">
+      <h2 id="portfolio-title" class="section-title">Featured Projects</h2>
+      <p class="subtle">A selection of recent commercial installations & upgrades.</p>
+
+      <div class="portfolio-grid" role="list">
+        <!-- Project 1 -->
+        <article class="project" tabindex="0" role="button" aria-pressed="false" data-title="Bank CCTV Upgrade" data-desc="Full bank CCTV redesign including NVR, PoE cameras and secure remote viewing." data-tech="CCTV, NVR, PoE cameras" data-img="bank" >
+          <div class="overlay" aria-hidden="true"></div>
+          <div class="meta">
+            <div style="font-weight:800">Bank CCTV Upgrade</div>
+            <div style="font-size:0.9rem">NVR & PoE camera deployment</div>
+          </div>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="project" tabindex="0" role="button" aria-pressed="false" data-title="College Network Rollout" data-desc="Structured cabling and switch deployment across three campus buildings." data-tech="Cat6A cabling, switches, VLANs" data-img="campus">
+          <div class="overlay"></div>
+          <div class="meta">
+            <div style="font-weight:800">College Network Rollout</div>
+            <div style="font-size:0.9rem">Cat6A cabling across campus</div>
+          </div>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="project" tabindex="0" role="button" aria-pressed="false" data-title="Office Power Upgrade" data-desc="Panel upgrade, power distribution improvements, and emergency lighting for a corporate office." data-tech="Power panels, emergency lighting" data-img="office">
+          <div class="overlay"></div>
+          <div class="meta">
+            <div style="font-weight:800">Office Power Upgrade</div>
+            <div style="font-size:0.9rem">Panel & safety upgrades</div>
+          </div>
+        </article>
+
+        <!-- Project 4 -->
+        <article class="project" tabindex="0" role="button" aria-pressed="false" data-title="Campus CCTV & Access" data-desc="Integrated CCTV with access control for student areas and admin." data-tech="CCTV, Access Control" data-img="campus2">
+          <div class="overlay"></div>
+          <div class="meta">
+            <div style="font-weight:800">Campus CCTV & Access</div>
+            <div style="font-size:0.9rem">Integrated security solution</div>
+          </div>
+        </article>
+
+        <!-- Project 5 -->
+        <article class="project" tabindex="0" role="button" aria-pressed="false" data-title="Bank Ethernet Segmentation" data-desc="VLAN segmentation and redundancy for critical banking systems." data-tech="VLAN, Redundancy, Switches" data-img="bank2">
+          <div class="overlay"></div>
+          <div class="meta">
+            <div style="font-weight:800">Bank Ethernet Segmentation</div>
+            <div style="font-size:0.9rem">Secure VLAN architecture</div>
+          </div>
+        </article>
+
+        <!-- Project 6 -->
+        <article class="project" tabindex="0" role="button" aria-pressed="false" data-title="Retail Camera & POS Audit" data-desc="Camera placement and POS network audit to improve coverage and compliance." data-tech="Audit, CCTV, POE" data-img="retail">
+          <div class="overlay"></div>
+          <div class="meta">
+            <div style="font-weight:800">Retail Camera & POS Audit</div>
+            <div style="font-size:0.9rem">Coverage & compliance improvements</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Case Study: Before/After -->
+    <section id="case" aria-labelledby="case-title">
+      <h2 id="case-title" class="section-title">Case Study — Bank CCTV Upgrade</h2>
+      <p class="subtle">Before and after: improved coverage and centralized recording.</p>
+
+      <div class="ba" id="baSlider" aria-label="Before and after slider" tabindex="0" role="group">
+        <!-- before layer -->
+        <div class="before" style="position:absolute;inset:0">
+          <div class="placeholder" aria-hidden="true" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(7,33,49,0.15);font-weight:800">BEFORE: scattered cameras</div>
+        </div>
+        <!-- after layer that is clipped -->
+        <div class="after" aria-hidden="true">
+          <div class="placeholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;background:linear-gradient(90deg,var(--accent),var(--accent-2))">AFTER: optimized coverage</div>
+        </div>
+
+        <div class="handle" id="baHandle" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" tabindex="0">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20" stroke="#072131" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span style="font-weight:700;color:var(--brand)">Drag</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing" aria-labelledby="pricing-title">
+      <h2 id="pricing-title" class="section-title">Pricing & Packages</h2>
+      <p class="subtle">Simple packages for common needs — custom quotes available for large installs.</p>
+
+      <div class="pricing-grid">
+        <div class="price-card">
+          <h3>Basic</h3>
+          <p style="color:var(--muted)">Small site visit & basic repairs</p>
+          <div style="font-weight:800;font-size:1.6rem;margin:12px 0">₹1,499</div>
+          <ul style="color:var(--muted)"><li>Site check</li><li>Minor electrical repairs</li><li>1-month support</li></ul>
+          <div style="margin-top:12px"><button class="btn primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Select</button></div>
+        </div>
+
+        <div class="price-card best">
+          <h3>Business (Most Popular)</h3>
+          <p style="color:var(--muted)">Ideal for offices & small banks</p>
+          <div style="font-weight:800;font-size:1.6rem;margin:12px 0">₹24,999</div>
+          <ul style="color:var(--muted)"><li>Structured cabling up to 100 drops</li><li>PoE CCTV setup</li><li>12-month support</li></ul>
+          <div style="margin-top:12px"><button class="btn primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Select</button></div>
+        </div>
+
+        <div class="price-card">
+          <h3>Enterprise</h3>
+          <p style="color:var(--muted)">Custom solutions for large deployments</p>
+          <div style="font-weight:800;font-size:1.6rem;margin:12px 0">Custom</div>
+          <ul style="color:var(--muted)"><li>Full audit & design</li><li>Staggered rollout</li><li>Dedicated support SLA</li></ul>
+          <div style="margin-top:12px"><button class="btn primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Request Quote</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS & CLIENTS -->
+    <section aria-labelledby="test-title">
+      <h2 id="test-title" class="section-title">Testimonials</h2>
+      <p class="subtle">What local IT managers and facilities teams say.</p>
+
+      <div class="testimonials" id="testimonials" aria-live="polite">
+        <article class="testimonial" id="t1">
+          <p style="margin:0 0 8px 0">"ProTech completed our campus network upgrade on schedule and documented everything — extremely professional."</p>
+          <div style="font-weight:800">R. Sharma, IT Manager — Local College</div>
+        </article>
+
+        <article class="testimonial" id="t2" style="display:none">
+          <p style="margin:0 0 8px 0">"They redesigned our bank CCTV system and provided redundancy. No downtime during the upgrade."</p>
+          <div style="font-weight:800">M. Verma, Head of Security — Regional Bank</div>
+        </article>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:12px;align-items:center">
+        <div aria-hidden="true" style="display:flex;gap:8px;align-items:center">
+          <div style="width:84px;height:36px;border-radius:8px;background:linear-gradient(90deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800">Bank</div>
+          <div style="width:84px;height:36px;border-radius:8px;background:linear-gradient(90deg,#e6eef1,#fff);display:flex;align-items:center;justify-content:center;color:var(--brand);font-weight:800">College</div>
+          <div style="width:84px;height:36px;border-radius:8px;background:linear-gradient(90deg,#fff8e1,#fff);display:flex;align-items:center;justify-content:center;color:var(--brand);font-weight:800">Office</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title" class="section-title">Contact & Request Quote</h2>
+      <p class="subtle">Fill the form below or use the phone for immediate response.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start">
+        <div style="background:var(--surface);padding:18px;border-radius:12px;box-shadow:var(--shadow-sm)">
+          <form class="contact" id="contactForm" novalidate>
+            <div class="field">
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" required placeholder="Your full name" />
+            </div>
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input id="phone" name="phone" type="tel" required placeholder="+91-9xxxxxxxxx" />
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required placeholder="you@example.com" />
+            </div>
+            <div class="field">
+              <label for="service">Service</label>
+              <select id="service" name="service" required>
+                <option value="">Choose a service…</option>
+                <option>Commercial Electrical</option>
+                <option>CCTV Installation & Repair</option>
+                <option>Structured Ethernet Networking</option>
+                <option>Site Audit & Maintenance</option>
+              </select>
+            </div>
+
+            <div class="field" style="grid-column:1/-1">
+              <label for="message">Project details</label>
+              <textarea id="message" name="message" placeholder="Brief description, location, timeline and any access constraints"></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Generate Email & Copy</button>
+              <button type="button" class="btn ghost" id="mailtoFallback">Open Mail Client</button>
+              <div style="margin-left:auto;color:var(--muted);font-size:0.95rem">Response: <strong style="color:var(--brand)">Same day (metro)</strong></div>
+            </div>
+          </form>
+        </div>
+
+        <aside style="background:var(--surface);padding:18px;border-radius:12px;box-shadow:var(--shadow-sm)">
+          <div style="font-weight:800;color:var(--brand);margin-bottom:8px">Contact</div>
+          <div style="margin-bottom:8px">Phone: <a href="#" id="contactPhone" style="color:var(--brand);text-decoration:none;font-weight:700">+91-98765-43210</a></div>
+          <div style="margin-bottom:8px">Email: <a href="#" id="contactEmail" style="color:var(--brand);text-decoration:none;font-weight:700">contact@protech.example</a></div>
+          <div style="margin-top:12px;color:var(--muted)">Office hours: Mon–Sat, 8:00–18:00. Emergency response available 24/7 for critical clients.</div>
+
+          <div style="margin-top:14px">
+            <button class="btn primary" id="quickCall">Call Now</button>
+            <button class="btn ghost" id="quickEmail">Email Us</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- JSON-LD structured data for LocalBusiness -->
+    <script type="application/ld+json">
+      {
+        "@context":"https://schema.org",
+        "@type":"LocalBusiness",
+        "name":"ProTech Tech",
+        "telephone":"+91-98765-43210",
+        "email":"contact@protech.example",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Your City",
+          "addressCountry": "IN"
+        },
+        "description":"Certified technician providing electrical, CCTV and networking solutions for banks, colleges and businesses."
+      }
+    </script>
+
+  </main>
+
+  <!-- Modal Lightbox -->
+  <div class="modal" id="modal" role="dialog" aria-hidden="true" aria-modal="true">
+    <div class="modal-card" role="document">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div>
+          <div id="modalTitle" style="font-weight:800;color:var(--brand)"></div>
+          <div id="modalTech" style="color:var(--muted);font-size:0.95rem"></div>
+        </div>
+        <div>
+          <button id="modalClose" class="btn ghost">Close</button>
+        </div>
+      </div>
+
+      <div class="modal-media" id="modalMedia">PROJECT IMAGE</div>
+      <p id="modalDesc" style="color:var(--muted)"></p>
+    </div>
+  </div>
+
+  <footer class="wrap" role="contentinfo">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-weight:800">ProTech Tech</div>
+        <div style="color:var(--muted)">Dependable Electrical, CCTV & Network Solutions</div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center">
+        <a href="#" style="text-decoration:none;color:var(--muted)">Privacy</a>
+        <a href="#" style="text-decoration:none;color:var(--muted)">Terms</a>
+        <a href="#" style="text-decoration:none;color:var(--muted)">Sitemap</a>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;color:var(--muted);font-size:0.9rem">© <span id="year"></span> ProTech Tech — All rights reserved.</div>
+  </footer>
+
+  <script>
+
+    /* ===========================
+       JavaScript: Interactions & Accessibility
+       =========================== */
+
+    (function(){
+      'use strict';
+
+      // Utilities
+      const $ = (sel, el=document) => el.querySelector(sel);
+      const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+      const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+      // Header phone/email population (edit in header attributes)
+      const header = document.getElementById('site-header');
+      const phone = header.getAttribute('data-phone') || '+91-98765-43210';
+      const email = header.getAttribute('data-email') || 'contact@protech.example';
+      $('#headerPhone').textContent = phone;
+      $('#panelPhone').textContent = phone;
+      $('#panelPhone').href = `tel:${phone.replace(/[^+0-9]/g,'')}`;
+      $('#contactPhone').textContent = phone;
+      $('#contactPhone').href = `tel:${phone.replace(/[^+0-9]/g,'')}`;
+      $('#contactEmail').textContent = email;
+      $('#contactEmail').href = `mailto:${email}`;
+
+      // Year
+      $('#year').textContent = new Date().getFullYear();
+
+      // Mobile nav toggle
+      const navToggle = $('#navToggle');
+      const mainNav = $('nav.nav');
+      navToggle.addEventListener('click', () => {
+        const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+        navToggle.setAttribute('aria-expanded', String(!expanded));
+        if (!expanded) {
+          mainNav.classList.add('responsive');
+          mainNav.setAttribute('style','display:flex;flex-direction:column;');
+          mainNav.querySelectorAll('a').forEach(a => a.addEventListener('click', ()=> {
+            mainNav.classList.remove('responsive');
+            mainNav.removeAttribute('style');
+            navToggle.setAttribute('aria-expanded','false');
+          }));
+        } else {
+          mainNav.classList.remove('responsive');
+          mainNav.removeAttribute('style');
+        }
+      });
+
+      // Theme toggle + persistence
+      const themeToggle = $('#themeToggle');
+      const root = document.documentElement;
+      const themePref = localStorage.getItem('theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      if (themePref === 'dark') root.setAttribute('data-theme','dark');
+      themeToggle.addEventListener('click', () => {
+        const cur = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = cur === 'dark' ? 'light' : 'dark';
+        if (next === 'dark') root.setAttribute('data-theme','dark'); else root.removeAttribute('data-theme');
+        themeToggle.setAttribute('aria-pressed', next === 'dark');
+        localStorage.setItem('theme', next);
+      });
+
+      // Smooth scroll for links
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', (e) => {
+          const href = a.getAttribute('href');
+          if (href.length > 1) {
+            e.preventDefault();
+            const el = document.querySelector(href);
+            if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+          }
+        });
+      });
+
+      // Animated counters when in view
+      const counters = $$('[data-counter]');
+      const counterObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            const target = Number(el.getAttribute('data-counter') || 0);
+            let start = 0;
+            const dur = 1200;
+            const startTime = performance.now();
+            const step = (now) => {
+              const t = clamp((now - startTime) / dur, 0, 1);
+              el.textContent = Math.floor(t * target);
+              if (t < 1) requestAnimationFrame(step); else el.textContent = target;
+            };
+            requestAnimationFrame(step);
+            counterObserver.unobserve(el);
+          }
+        });
+      }, {threshold:0.4});
+      counters.forEach(c => counterObserver.observe(c));
+
+      // Portfolio lightbox modal
+      const projects = $$('.project');
+      const modal = $('#modal');
+      const modalTitle = $('#modalTitle');
+      const modalDesc = $('#modalDesc');
+      const modalTech = $('#modalTech');
+      const modalMedia = $('#modalMedia');
+      const modalClose = $('#modalClose');
+
+      function openModal(data){
+        modalTitle.textContent = data.title;
+        modalDesc.textContent = data.desc;
+        modalTech.textContent = data.tech;
+        // Render a simple inline SVG 'image' placeholder according to data.img
+        const content = renderProjectMedia(data.img);
+        modalMedia.innerHTML = '';
+        modalMedia.appendChild(content);
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden','false');
+        document.body.style.overflow = 'hidden';
+        modalClose.focus();
+      }
+      function closeModal(){
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden','true');
+        document.body.style.overflow = '';
+      }
+      projects.forEach(p => {
+        p.addEventListener('click', () => {
+          openModal({
+            title: p.dataset.title,
+            desc: p.dataset.desc,
+            tech: p.dataset.tech,
+            img: p.dataset.img
+          });
+        });
+        p.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            p.click();
+          }
+        });
+      });
+      modalClose.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+      function renderProjectMedia(name){
+        // simple colored SVG placeholders (keeps file size small)
+        const ns = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(ns,'svg');
+        svg.setAttribute('viewBox','0 0 1200 600');
+        svg.setAttribute('width','100%');
+        svg.setAttribute('height','100%');
+        const rect = document.createElementNS(ns,'rect');
+        rect.setAttribute('width','100%'); rect.setAttribute('height','100%');
+        if (name.includes('bank')) rect.setAttribute('fill','url(#m1)');
+        else if (name.includes('campus')) rect.setAttribute('fill','url(#m2)');
+        else if (name.includes('office')) rect.setAttribute('fill','url(#m3)');
+        else rect.setAttribute('fill','url(#m4)');
+        const defs = document.createElementNS(ns,'defs');
+        defs.innerHTML = '<linearGradient id="m1" x1="0" x2="1"><stop offset="0" stop-color="#0fa3a4"/><stop offset="1" stop-color="#072131"/></linearGradient>' +
+                         '<linearGradient id="m2" x1="0" x2="1"><stop offset="0" stop-color="#d4af37"/><stop offset="1" stop-color="#0b3b59"/></linearGradient>' +
+                         '<linearGradient id="m3" x1="0" x2="1"><stop offset="0" stop-color="#0b3b59"/><stop offset="1" stop-color="#0fa3a4"/></linearGradient>' +
+                         '<linearGradient id="m4" x1="0" x2="1"><stop offset="0" stop-color="#e0e7ff"/><stop offset="1" stop-color="#c7f9f9"/></linearGradient>';
+        svg.appendChild(defs);
+        svg.appendChild(rect);
+        // caption text
+        const text = document.createElementNS(ns,'text');
+        text.setAttribute('x','50%'); text.setAttribute('y','50%'); text.setAttribute('dominant-baseline','middle'); text.setAttribute('text-anchor','middle');
+        text.setAttribute('fill','rgba(255,255,255,0.95)'); text.setAttribute('font-size','44'); text.setAttribute('font-weight','700');
+        text.textContent = name.toUpperCase();
+        svg.appendChild(text);
+        return svg;
+      }
+
+      // Before/After slider
+      const ba = $('#baSlider');
+      const baAfter = ba.querySelector('.after');
+      const baHandle = $('#baHandle');
+      let dragging = false;
+      function setBaPos(clientX){
+        const rect = ba.getBoundingClientRect();
+        let pct = (clientX - rect.left) / rect.width;
+        pct = clamp(pct, 0, 1);
+        const width = pct * 100;
+        baAfter.style.width = width + '%';
+        baHandle.style.left = (pct * 100) + '%';
+        baHandle.setAttribute('aria-valuenow', Math.round(width));
+      }
+      baHandle.addEventListener('mousedown', (e) => { dragging = true; e.preventDefault(); });
+      window.addEventListener('mouseup', () => dragging = false);
+      window.addEventListener('mousemove', (e) => { if (dragging) setBaPos(e.clientX); });
+      // support touch
+      baHandle.addEventListener('touchstart', ()=> dragging = true, {passive:true});
+      window.addEventListener('touchend', ()=> dragging = false);
+      window.addEventListener('touchmove', (e) => { if (dragging && e.touches[0]) setBaPos(e.touches[0].clientX); }, {passive:true});
+      // click-to-position on slider
+      ba.addEventListener('click', (e) => setBaPos(e.clientX));
+
+      // Simple testimonials carousel
+      (function(){
+        const t1 = $('#t1'), t2 = $('#t2');
+        let idx = 0;
+        setInterval(() => {
+          idx = (idx + 1) % 2;
+          if (idx === 0){ t1.style.display='block'; t2.style.display='none'; }
+          else { t1.style.display='none'; t2.style.display='block'; }
+        }, 6000);
+      })();
+
+      // Contact form validation & mailto generation + copy to clipboard
+      const form = $('#contactForm');
+      const mailtoFallback = $('#mailtoFallback');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+          // show quick validation messages
+          form.querySelectorAll('input,textarea,select').forEach(i => {
+            if (!i.checkValidity()) i.focus();
+          });
+          return;
+        }
+
+        const fd = new FormData(form);
+        const name = fd.get('name'), phone=fd.get('phone'), email=fd.get('email'), service=fd.get('service'), msg=fd.get('message');
+        const subject = encodeURIComponent(`[Quote Request] ${service} - ${name}`);
+        const body = encodeURIComponent(
+          `Name: ${name}\nPhone: ${phone}\nEmail: ${email}\nService: ${service}\n\nMessage:\n${msg}\n\n---\nGenerated from ProTech site`
+        );
+        const siteEmail = header.getAttribute('data-email') || 'contact@protech.example';
+        const mailto = `mailto:${siteEmail}?subject=${subject}&body=${body}`;
+
+        // open mail client in new tab (user can choose to send)
+        window.location.href = mailto;
+
+        // Copy message to clipboard as backup
+        const fallbackText = `To: ${siteEmail}\nSubject: ${decodeURIComponent(subject)}\n\n${decodeURIComponent(body)}`;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(fallbackText).then(()=> {
+            alert('Email draft opened in your mail client. Message copied to clipboard as backup.');
+          }, ()=> {
+            alert('Email draft opened. Could not copy to clipboard automatically.');
+          });
+        } else {
+          alert('Email draft opened in your mail client.');
+        }
+      });
+
+      // mailto fallback button
+      mailtoFallback.addEventListener('click', () => {
+        const email = header.getAttribute('data-email') || 'contact@protech.example';
+        window.location.href = `mailto:${email}`;
+      });
+
+      // quick call / email buttons
+      $('#quickCall').addEventListener('click', ()=> {
+        const tel = header.getAttribute('data-phone') || '';
+        window.location.href = `tel:${tel.replace(/[^+0-9]/g,'')}`;
+      });
+      $('#quickEmail').addEventListener('click', ()=> {
+        const email = header.getAttribute('data-email') || 'contact@protech.example';
+        window.location.href = `mailto:${email}`;
+      });
+
+      // header call button
+      $('#callBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        const tel = header.getAttribute('data-phone') || '';
+        window.location.href = `tel:${tel.replace(/[^+0-9]/g,'')}`;
+      });
+
+      // Accessibility: trap focus in modal when open (simple)
+      document.addEventListener('focusin', (e) => {
+        if (modal.classList.contains('open')) {
+          if (!modal.contains(e.target)) modalClose.focus();
+        }
+      });
+
+      // Intersection animations (fade/slide)
+      const animables = $$('section, .service-card, .project, .price-card, .testimonial');
+      animables.forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(10px)'; el.style.transition = 'opacity 520ms var(--ease), transform 520ms var(--ease)'; });
+      const animObs = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'none';
+            animObs.unobserve(entry.target);
+          }
+        });
+      }, {threshold:0.12});
+      animables.forEach(a => animObs.observe(a));
+
+      // No-JS fallback: ensure contact links are visible (mailto hrefs are set above)
+      // Console cleanliness: no errors expected.
+
+      // End IIFE
+    })();
+  </script>
+</body>
+</html>
+
+>>>>>>> 97b5719c78a326e2c2537a7182a63de9dd139359
