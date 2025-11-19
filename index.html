@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CamNet | Elite Technical Solutions</title>
+    <meta name="description" content="Premium Electrician, CCTV, and Networking services for modern businesses and homes.">
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --bg-dark: #050507;
+            --bg-panel: #0f111a;
+            --primary: #3b82f6; /* Royal Blue */
+            --primary-glow: rgba(59, 130, 246, 0.5);
+            --accent: #06b6d4; /* Cyan */
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --gradient-text: linear-gradient(135deg, #ffffff 0%, #b4c6ef 100%);
+            --gradient-btn: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+
+        /* --- UTILITIES --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-padding {
+            padding: 100px 0;
+        }
+
+        .text-gradient {
+            background: var(--gradient-text);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-btn);
+            color: white;
+            box-shadow: 0 10px 20px -5px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px var(--primary-glow);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+        }
+
+        /* --- ANIMATIONS --- */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- HEADER --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px 0;
+            transition: 0.4s;
+        }
+
+        header.scrolled {
+            padding: 15px 0;
+            background: rgba(5, 5, 7, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i { color: var(--primary); }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            font-size: 0.95rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, #1a233a 0%, #050507 100%);
+        }
+
+        /* Abstract background shapes */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: var(--primary);
+            filter: blur(150px);
+            opacity: 0.15;
+            border-radius: 50%;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            filter: blur(150px);
+            opacity: 0.1;
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            font-weight: 800;
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 90%;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+        }
+
+        /* --- SERVICES SECTION --- */
+        .services {
+            background: var(--bg-dark);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 40px 30px;
+            border-radius: 24px;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(59, 130, 246, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .service-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* --- ABOUT SECTION --- */
+        .about {
+            background: #080a10;
+            position: relative;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-img-placeholder {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(45deg, #111, #1a1a1a);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .about-img-placeholder i {
+            font-size: 5rem;
+            color: rgba(255,255,255,0.05);
+        }
+
+        .trust-badge {
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            background: var(--bg-panel);
+            padding: 20px 30px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .trust-badge h4 {
+            font-size: 2rem;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .about-list li {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+        }
+
+        .about-list i {
+            color: var(--accent);
+        }
+
+        /* --- CONTACT SECTION --- */
+        .contact {
+            background: var(--bg-dark);
+        }
+
+        .contact-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 40px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 10px;
+            overflow: hidden;
+            margin-bottom: 50px;
+        }
+
+        .contact-info {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .info-item {
+            margin-bottom: 30px;
+        }
+
+        .info-item h4 {
+            color: white;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .info-item p, .info-item a {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            /* filter: grayscale(100%) invert(92%) contrast(83%); */
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- FLOATING BUTTONS --- */
+        .floating-dock {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 999;
+        }
+
+        .float-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+
+        .float-whatsapp {
+            background: #25D366;
+        }
+
+        .float-phone {
+            background: var(--primary);
+        }
+
+        .float-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.8rem; }
+            .nav-links { display: none; } 
+            /* Note: Simple hamburger logic could be added, but keeping it single file clean for now. */
+            .hero-btns { flex-direction: column; }
+            .about-grid { grid-template-columns: 1fr; }
+            .contact-wrapper { grid-template-columns: 1fr; }
+            .about-img-placeholder { height: 250px; }
+            .floating-dock { bottom: 20px; right: 20px; }
+            .float-btn { width: 50px; height: 50px; font-size: 1.2rem; }
+        }
+        .company-logo {
+    width: 100%;        /* adjust size */
+    height: 100%;
+    display: block;
+    border-radius: 23px;
+    margin: 10 auto 10px; /* center and add spacing */
+}
+.about-img-placeholder {
+    text-align: center;
+    position: relative;
+}
+
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation -->
+    <header id="navbar">
+        <div class="container nav-wrapper">
+            <div class="logo">
+                <i class="fa-solid fa-network-wired"></i> CamNet
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="container">
+            <div class="hero-content fade-in">
+                <h1 class="text-gradient">Next-Gen Infrastructure <br> For Modern Spaces.</h1>
+                <p>Premier Electrician, CCTV, and Networking services for banks, colleges, and high-end residences. Precision engineering meets reliability.</p>
+                <div class="hero-btns">
+                    <a href="tel:+917406544200" class="btn btn-primary">
+                        <i class="fas fa-phone-alt"></i> Call Now
+                    </a>
+                    <a href="https://wa.me/917406544200" target="_blank" class="btn btn-secondary">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section-padding services">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2>Our Expertise</h2>
+                <p>Comprehensive technical solutions tailored for efficiency.</p>
+            </div>
+
+            <div class="services-grid">
+                <!-- Service 1 -->
+                <div class="service-card fade-in">
+                    <div class="icon-box">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Electrician Services</h3>
+                    <p>Advanced electrical wiring, panel upgrades, and fault diagnosis for commercial and residential complexes. Safe and compliant.</p>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="service-card fade-in">
+                    <div class="icon-box">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>CCTV Systems</h3>
+                    <p>High-definition surveillance installation, IP camera setups, and remote monitoring configuration for total peace of mind.</p>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="service-card fade-in">
+                    <div class="icon-box">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3>Networking & Ethernet</h3>
+                    <p>Structured cabling, server room setup, and high-speed LAN configuration for banks, offices, and educational institutions.</p>
+                </div>
+
+                <!-- Service 4 -->
+                <div class="service-card fade-in">
+                    <div class="icon-box">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Tech Troubleshooting</h3>
+                    <p>Rapid diagnosis and repair of hardware faults, connectivity issues, and system integration failures.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section-padding about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content fade-in">
+                    <h2 class="text-gradient" style="font-size: 2.5rem; margin-bottom: 20px;">Engineered for Trust.</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">
+                        CamNet is not just a service provider; we are your technical partners. Specializing in large-scale deployments for banks and colleges, we bring enterprise-grade precision to every job.
+                    </p>
+                    <ul class="about-list">
+                        <li><i class="fas fa-check-circle"></i> Certified Technical Experts</li>
+                        <li><i class="fas fa-check-circle"></i> 24/7 Emergency Support</li>
+                        <li><i class="fas fa-check-circle"></i> Premium Quality Cabling & Hardware</li>
+                        <li><i class="fas fa-check-circle"></i> Serving Banks, Offices & Colleges</li>
+                    </ul>
+                    <div style="margin-top: 30px;">
+                        <a href="#contact" class="btn btn-secondary">Get a Quote</a>
+                    </div>
+                </div>
+                <div class="about-image fade-in">
+    <div class="about-img-placeholder">
+
+        <img src="logo2.png" alt="Company Logo" class="company-logo">
+
+        <!-- <div class="trust-badge">
+            <h4>100%</h4>
+            <span>Uptime Guarantee</span>
+        </div> -->
+    </div>
+</div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section-padding contact">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2>Connect With Us</h2>
+                <p>Ready to upgrade your infrastructure? We are one call away.</p>
+            </div>
+
+            <div class="contact-wrapper fade-in">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <h4><i class="fas fa-phone" style="color: var(--primary);"></i> Phone</h4>
+                        <a href="tel:+917406544200">+91 7406544200</a>
+                    </div>
+                    <div class="info-item">
+                        <h4><i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp</h4>
+                        <a href="https://wa.me/917406544200" target="_blank">Chat on WhatsApp</a>
+                    </div>
+                    <div class="info-item">
+                        <h4><i class="fas fa-map-marker-alt" style="color: var(--accent);"></i> Service Area</h4>
+                        <p>Available across the city for on-site visits.</p>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <a href="tel:+917406544200" class="btn btn-primary" style="width: 100%; justify-content: center;">Call Technician</a>
+                    </div>
+                </div>
+                <div class="map-container">
+                    <!-- Embedding a placeholder map centered on India/Bangalore region as generic placeholder -->
+                    <!-- <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.8869392299!2d77.5945627!3d12.9715987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf8dfc3e8517e4fe0!2sBengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin" allowfullscreen="" loading="lazy"></iframe> -->
+                     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d203.33216351263755!2d74.51414926744582!3d15.855981700000015!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bbf66bc61aa787d%3A0xf36ce57dfb600ef7!2s1066a%2C%20Anantshayan%20Galli%2C%20Tilak%20Chowk%2C%20Belagavi%2C%20Karnataka%20590001!5e1!3m2!1sen!2sin!4v1763563260399!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+
+            <div class="service-card fade-in">
+    <div class="icon-box">
+        <i class="fas fa-qrcode"></i>
+    </div>
+    <h3>QR Code Access</h3>
+    <p>Scan the QR code below for quick access to services and contact details.</p>
+
+    <div class="qr-box"><br>
+        <img src="qr.png" alt="QR Code" style="border-radius: 10%;">
+    </div>
+</div>
+
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 CamNet Technical Services. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Floating Sticky Buttons -->
+    <div class="floating-dock">
+        <a href="https://wa.me/917406544200" target="_blank" class="float-btn float-whatsapp" title="WhatsApp Us">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="tel:+917406544200" class="float-btn float-phone" title="Call Now">
+            <i class="fas fa-phone"></i>
+        </a>
+    </div>
+
+    <script>
+        // --- Sticky Header Logic ---
+        const header = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // --- Scroll Animation (Intersection Observer) ---
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // --- Mobile Menu Toggle (Simple implementation) ---
+        /* Note: In a pure single file without framework, we keep it simple. 
+           The nav links will just stack or hide on very small screens as per CSS. */
+    </script>
+</body>
+</html>
